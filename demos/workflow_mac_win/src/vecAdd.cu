@@ -1,5 +1,4 @@
-#include <fstream>
-#include <iostream>
+#include "vecAdd.h"
 
 __global__ 
 void vecAddkernel(float* A, float* B, float* C, int n) {
@@ -8,7 +7,6 @@ void vecAddkernel(float* A, float* B, float* C, int n) {
     {
         C[i] = A[i] * B[i];
     }
-    
 }   
 
 void vecAdd(float* A_h, float* B_h, float* C_h, int n) {
@@ -23,6 +21,7 @@ void vecAdd(float* A_h, float* B_h, float* C_h, int n) {
     cudaMemcpy(B_d, B_h, size, cudaMemcpyHostToDevice);
 
     // invocation
+    vecAddkernel<<<(n + 256 - 1)/ 256, 256>>>(A_d, B_d, C_d, n);
 
     cudaMemcpy(C_h, C_d, size, cudaMemcpyDeviceToHost);
     
@@ -30,33 +29,4 @@ void vecAdd(float* A_h, float* B_h, float* C_h, int n) {
     cudaFree(B_d);
     cudaFree(C_d);
 
-}
-
-int main() {
-    std::ifstream ifs("./arrays.txt");
-    std::ofstream ofs("./out.txt");
-    int total;
-    float *A, *B, *C;
-
-    ifs >> total;
-    A = new float[total];
-    B = new float[total];
-    C = new float[total];
-    for (size_t i = 0; i < total; i++)
-    {
-        ifs >> A[i];
-    }
-    for (size_t i = 0; i < total; i++)
-    {
-        ifs >> B[i];
-    }
-
-    vecAdd(A, B, C, total);
-
-    for (size_t i = 0; i < total; i++)
-    {
-        ofs << C[i] << ' ';
-    }
-    
-    return 0;
 }
