@@ -96,5 +96,27 @@ Changes are:
 
 ### write CMakeLists.txt
 
+Through trials and errors, CMake finally works.
+
+1. include necessary directories
+    
+    ```CMakeLists.txt
+    include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CUDAToolkit_INCLUDE_DIRS}
+    )
+    ```
+    
+    First one is for my headers in `./include`.
+    
+    Second one is necessary sometimes because CMake probably would not include cuda header path automatically, even if I call
+
+    ```CMakeLists.txt
+    find_package(CUDAToolkit REQUIRED)
+    ```
+    
+    Note that `find_package(CUDA REQUIRED)` is deprecated for project use.
+
+2. use CUDA C extension in `.cu` files (kernel functions and calling routine, etc.)
 
 
